@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, Switch, Redirect, useParams } from "react-router-dom";
 import MovieList from './components/MovieList';
 import Movie from './components/Movie';
 
@@ -19,6 +19,7 @@ const App = (props) => {
     axios.get('http://localhost:5000/api/movies')
       .then(res => {
         setMovies(res.data);
+
       })
       .catch(err => {
         console.log(err);
@@ -26,6 +27,13 @@ const App = (props) => {
   }, []);
 
   const deleteMovie = (id)=> {
+    axios.delete(`http://localhost:5000/api/movies/${id}`)
+      .then(res => {
+        setMovies(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   const addToFavorites = (movie) => {
@@ -45,10 +53,11 @@ const App = (props) => {
         
           <Switch>
             <Route path="/movies/edit/:id">
+              <EditMovieForm setMovies={setMovies}/>
             </Route>
 
             <Route path="/movies/:id">
-              <Movie/>
+              <Movie deleteMovie={deleteMovie} />
             </Route>
 
             <Route path="/movies">
